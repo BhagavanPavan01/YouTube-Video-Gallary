@@ -26,61 +26,65 @@
 </head>
 
 <body>
-     <!-- Navigation -->
-     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+     
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <i class="fab fa-youtube me-2"></i>Video Gallery
+                <i class="fab fa-youtube me-2"></i>Telugu Videos
             </a>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="container my-5">
-        <div class="row mb-4">
-            <div class="col-md-6 mx-auto">
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search videos..." id="searchInput">
-                    <button class="btn btn-danger" type="button" id="searchButton">
+            <div class="d-flex">
+                <div class="input-group search-box">
+                    <input type="text" class="form-control" placeholder="Search Telugu videos...">
+                    <button class="btn btn-danger" type="button">
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
             </div>
         </div>
+    </nav>
 
-        <div class="category-filter text-center mb-4">
-            <button class="category-btn btn btn-outline-secondary active" data-category="all">All Videos</button>
-            <button class="category-btn btn btn-outline-secondary" data-category="music">Music</button>
-            <button class="category-btn btn btn-outline-secondary" data-category="gaming">Gaming</button>
-            <button class="category-btn btn btn-outline-secondary" data-category="education">Education</button>
-            <button class="category-btn btn btn-outline-secondary" data-category="tech">Technology</button>
+    <!-- Main Content -->
+    <div class="container-fluid mt-3">
+        <!-- Category Chips -->
+        <div class="category-chips">
+            <button class="chip active">All</button>
+            <button class="chip">Songs</button>
+            <button class="chip">Movies</button>
+            <button class="chip">Comedy</button>
+            <button class="chip">Devotional</button>
+            <button class="chip">Trailers</button>
         </div>
 
-        <div class="row" id="videoGallery">
-            <!-- Videos will be loaded here -->
+        <!-- Video Grid -->
+        <div class="row g-3" id="videoGrid">
+            <!-- Videos will be loaded here by JavaScript -->
         </div>
 
-        <div class="text-center mt-4">
-            <button class="btn btn-primary" id="loadMore">Load More Videos</button>
+        <!-- Load More Button -->
+        <div class="text-center my-4">
+            <button class="btn btn-outline-danger" id="loadMore">Load More Videos</button>
         </div>
     </div>
 
-    <!-- Video Modal -->
-    <div class="modal fade" id="videoModal" tabindex="-1" aria-hidden="true">
+    <!-- Video Player Modal -->
+    <div class="modal fade" id="videoModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="videoModalTitle"></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="videoTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-0">
-                    <div class="video-container">
-                        <iframe id="youtubeVideo" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div class="ratio ratio-16x9">
+                        <iframe id="youtubePlayer" src="" allowfullscreen></iframe>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <div class="me-auto" id="videoModalViews"></div>
-                    <div id="videoModalDate"></div>
+                    <div class="d-flex justify-content-between w-100">
+                        <span id="videoViews"></span>
+                        <span id="videoDate"></span>
+                    </div>
                 </div>
             </div>
         </div>

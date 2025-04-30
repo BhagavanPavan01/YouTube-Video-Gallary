@@ -1,10 +1,33 @@
+// script.js
 document.addEventListener('DOMContentLoaded', function() {
-    // Sample Telugu video data
-    const teluguVideos = [
+    // DOM Elements
+    const videoGrid = document.getElementById('videoGrid');
+    const loadMoreBtn = document.getElementById('loadMore');
+    const categoryChips = document.querySelectorAll('.chip');
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const noResults = document.getElementById('noResults');
+    
+    // Modal Elements
+    const videoModal = new bootstrap.Modal(document.getElementById('videoModal'));
+    const youtubePlayer = document.getElementById('youtubePlayer');
+    const videoTitle = document.getElementById('videoTitle');
+    const videoViews = document.getElementById('videoViews');
+    const videoDate = document.getElementById('videoDate');
+
+    // State variables
+    let currentCategory = 'all';
+    let currentSearch = '';
+    let displayedVideos = 0;
+    const videosPerLoad = 8;
+    
+    // Sample video data
+    const videos = [
         {
             id: 'YxWlaYCA8MU',
-            title: 'Naatu Naatu - RRR (Telugu) | NTR, Ram Charan | MM Keeravaani | SS Rajamouli',
-            channel: 'T-Series Telugu',
+            title: 'Naatu Naatu - RRR | NTR, Ram Charan | MM Keeravaani | SS Rajamouli',
+            channel: 'T-Series',
             views: '450M views',
             date: 'Mar 22, 2022',
             duration: '3:36',
@@ -31,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
         {
             id: 'mY7M0Q9Qk2k',
             title: 'Jai Balayya - Full Comedy Show | Balakrishna | Sunil | Anil Ravipudi',
-            channel: 'HAHA TV Telugu',
+            channel: 'HAHA TV',
             views: '18M views',
             date: 'Jun 15, 2022',
             duration: '25:42',
@@ -40,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
         {
             id: 'sCbbMZ-q4-I',
             title: 'Srivalli - Pushpa: The Rise | Allu Arjun | DSP | Sid Sriram',
-            channel: 'T-Series Telugu',
+            channel: 'T-Series',
             views: '420M views',
             date: 'Dec 17, 2021',
             duration: '4:05',
@@ -48,66 +71,116 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         {
             id: '5hG4QZfQ7tI',
-            title: 'KGF Chapter 2 Telugu Trailer | Yash | Sanjay Dutt | Raveena Tandon',
+            title: 'KGF Chapter 2 Trailer | Yash | Sanjay Dutt | Raveena Tandon',
             channel: 'Mythri Movie Makers',
             views: '68M views',
             date: 'Mar 14, 2022',
             duration: '2:55',
             category: 'trailers'
+        },
+        {
+            id: 'JfVOs4VSpmA',
+            title: 'Ramulo Ramula | Sri Rama Janmabhoomi | Hanuman Chalisa | Shankar Mahadevan',
+            channel: 'Aditya Music',
+            views: '120M views',
+            date: 'Jan 15, 2024',
+            duration: '5:42',
+            category: 'devotional'
+        },
+        {
+            id: '7B7RcQx9kGA',
+            title: 'Uyyala | Sai Narayan Reddy | Shreya Ghoshal | SP Balasubrahmanyam',
+            channel: 'Zee Music',
+            views: '85M views',
+            date: 'Feb 28, 2023',
+            duration: '4:18',
+            category: 'songs'
+        },
+        {
+            id: '3V1a6hWz1kE',
+            title: 'Salaar Teaser | Prabhas | Prashanth Neel | Hombale Films',
+            channel: 'Hombale Films',
+            views: '93M views',
+            date: 'Jul 6, 2023',
+            duration: '2:12',
+            category: 'trailers'
+        },
+        {
+            id: 'kXYiU_JCYtU',
+            title: 'Nannu Kurravadini Chesina Neelambari | Nityananda | Nityashanti | Srimanth Entertainment',
+            channel: 'Srimanth Entertainment',
+            views: '32M views',
+            date: 'May 15, 2023',
+            duration: '3:56',
+            category: 'devotional'
+        },
+        {
+            id: 'LkOa3KFFt2E',
+            title: 'Jagadala Kutala | Dasara | Nani | Keerthy Suresh | S. Thaman',
+            channel: 'VYRS Films',
+            views: '71M views',
+            date: 'Sep 28, 2022',
+            duration: '3:34',
+            category: 'songs'
+        },
+        {
+            id: '9hVU9sYcAGM',
+            title: 'Alavanti Pranam | Adipurush | Pooja Hegde | Jeevit Ramakrishna',
+            channel: 'Lyca Productions',
+            views: '59M views',
+            date: 'Nov 12, 2022',
+            duration: '4:22',
+            category: 'songs'
         }
     ];
 
-    // DOM Elements
-    const videoGrid = document.getElementById('videoGrid');
-    const loadMoreBtn = document.getElementById('loadMore');
-    const categoryChips = document.querySelectorAll('.chip');
-    const videoModal = new bootstrap.Modal(document.getElementById('videoModal'));
-    const youtubePlayer = document.getElementById('youtubePlayer');
-    const videoTitle = document.getElementById('videoTitle');
-    const videoViews = document.getElementById('videoViews');
-    const videoDate = document.getElementById('videoDate');
-
-    // State variables
-    let currentCategory = 'all';
-    let displayedVideos = 6;
-
     // Initialize the gallery
     function initGallery() {
+        displayedVideos = videosPerLoad;
         renderVideos();
         setupEventListeners();
     }
 
     // Render videos based on current filters
     function renderVideos() {
+        loadingSpinner.style.display = 'block';
         videoGrid.innerHTML = '';
+        loadMoreBtn.style.display = 'none';
+        noResults.classList.add('d-none');
         
-        const filteredVideos = teluguVideos.filter(video => {
-            return currentCategory === 'all' || video.category === currentCategory;
-        }).slice(0, displayedVideos);
+        setTimeout(() => {
+            const filteredVideos = filterVideos();
+            
+            if (filteredVideos.length === 0) {
+                noResults.classList.remove('d-none');
+                loadingSpinner.style.display = 'none';
+                return;
+            }
+            
+            const videosToShow = filteredVideos.slice(0, displayedVideos);
+            
+            videosToShow.forEach(video => {
+                const videoCard = createVideoCard(video);
+                videoGrid.appendChild(videoCard);
+            });
+            
+            // Show/hide load more button
+            if (displayedVideos < filteredVideos.length) {
+                loadMoreBtn.style.display = 'block';
+            }
+            
+            loadingSpinner.style.display = 'none';
+        }, 500);
+    }
 
-        if (filteredVideos.length === 0) {
-            videoGrid.innerHTML = `
-                <div class="col-12 text-center py-5">
-                    <i class="fas fa-video-slash fa-3x text-muted mb-3"></i>
-                    <h4>No videos found</h4>
-                    <p>Try selecting a different category</p>
-                </div>
-            `;
-            loadMoreBtn.style.display = 'none';
-            return;
-        }
-
-        filteredVideos.forEach(video => {
-            const videoCard = createVideoCard(video);
-            videoGrid.appendChild(videoCard);
+    // Filter videos based on category and search
+    function filterVideos() {
+        return videos.filter(video => {
+            const matchesCategory = currentCategory === 'all' || video.category === currentCategory;
+            const matchesSearch = video.title.toLowerCase().includes(currentSearch.toLowerCase()) || 
+                                 video.channel.toLowerCase().includes(currentSearch.toLowerCase());
+            return matchesCategory && matchesSearch;
         });
-
-        // Show/hide load more button
-        const totalFilteredVideos = teluguVideos.filter(video => {
-            return currentCategory === 'all' || video.category === currentCategory;
-        }).length;
-
-        loadMoreBtn.style.display = displayedVideos >= totalFilteredVideos ? 'none' : 'block';
     }
 
     // Create video card element
@@ -117,6 +190,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const card = document.createElement('div');
         card.className = 'video-card card h-100';
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
         
         // Thumbnail with duration
         const thumbnail = document.createElement('div');
@@ -141,8 +216,13 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
         
-        // Add click event to open modal
+        // Add click and keyboard events
         card.addEventListener('click', () => openVideoModal(video));
+        card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                openVideoModal(video);
+            }
+        });
         
         card.appendChild(thumbnail);
         card.appendChild(info);
@@ -153,7 +233,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Open video modal
     function openVideoModal(video) {
-        youtubePlayer.src = `https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0`;
+        youtubePlayer.src = `https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0&modestbranding=1`;
         videoTitle.textContent = video.title;
         videoViews.textContent = video.views;
         videoDate.textContent = video.date;
@@ -167,22 +247,39 @@ document.addEventListener('DOMContentLoaded', function() {
             chip.addEventListener('click', () => {
                 categoryChips.forEach(c => c.classList.remove('active'));
                 chip.classList.add('active');
-                currentCategory = chip.textContent.toLowerCase();
-                displayedVideos = 6;
+                currentCategory = chip.dataset.category;
+                displayedVideos = videosPerLoad;
                 renderVideos();
             });
         });
 
+        // Search functionality
+        searchButton.addEventListener('click', performSearch);
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performSearch();
+        });
+
         // Load more videos
         loadMoreBtn.addEventListener('click', () => {
-            displayedVideos += 6;
+            displayedVideos += videosPerLoad;
             renderVideos();
+            // Smooth scroll to show new videos
+            setTimeout(() => {
+                loadMoreBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
         });
 
         // Clean up when modal closes
         document.getElementById('videoModal').addEventListener('hidden.bs.modal', () => {
             youtubePlayer.src = '';
         });
+    }
+
+    // Perform search
+    function performSearch() {
+        currentSearch = searchInput.value.trim();
+        displayedVideos = videosPerLoad;
+        renderVideos();
     }
 
     // Initialize the gallery

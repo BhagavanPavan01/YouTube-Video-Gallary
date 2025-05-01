@@ -1,287 +1,159 @@
-// script.js
 document.addEventListener('DOMContentLoaded', function() {
     // DOM Elements
-    const videoGrid = document.getElementById('videoGrid');
-    const loadMoreBtn = document.getElementById('loadMore');
-    const categoryChips = document.querySelectorAll('.chip');
-    const searchInput = document.getElementById('searchInput');
-    const searchButton = document.getElementById('searchButton');
-    const loadingSpinner = document.getElementById('loadingSpinner');
-    const noResults = document.getElementById('noResults');
-    
-    // Modal Elements
-    const videoModal = new bootstrap.Modal(document.getElementById('videoModal'));
+    const videosGrid = document.getElementById('videosGrid');
+    const videoModal = document.getElementById('videoModal');
+    const closeModal = document.querySelector('.close-modal');
     const youtubePlayer = document.getElementById('youtubePlayer');
-    const videoTitle = document.getElementById('videoTitle');
+    const videoModalTitle = document.getElementById('videoModalTitle');
     const videoViews = document.getElementById('videoViews');
-    const videoDate = document.getElementById('videoDate');
-
-    // State variables
-    let currentCategory = 'all';
-    let currentSearch = '';
-    let displayedVideos = 0;
-    const videosPerLoad = 8;
+    const videoLikes = document.getElementById('videoLikes');
+    const videoDescription = document.getElementById('videoDescription');
     
     // Sample video data
     const videos = [
         {
-            id: 'YxWlaYCA8MU',
-            title: 'Naatu Naatu - RRR | NTR, Ram Charan | MM Keeravaani | SS Rajamouli',
-            channel: 'T-Series',
-            views: '450M views',
-            date: 'Mar 22, 2022',
-            duration: '3:36',
-            category: 'songs'
+            id: 'dQw4w9WgXcQ',
+            title: 'Never Gonna Give You Up - Rick Astley (Official Music Video)',
+            channel: 'Rick Astley',
+            views: '1.2B views',
+            likes: '12M likes',
+            date: 'Oct 25, 2009',
+            duration: '3:32',
+            description: 'The official video for "Never Gonna Give You Up" by Rick Astley. "Never Gonna Give You Up" was a global smash on its release in July 1987...',
+            thumbnail: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg'
         },
         {
-            id: 'gOK3S_ok6xQ',
-            title: 'Pushpa: The Rise - Saami Saami | Allu Arjun | Rashmika | Devi Sri Prasad',
-            channel: 'Mythri Movie Makers',
-            views: '380M views',
-            date: 'Dec 10, 2021',
-            duration: '3:45',
-            category: 'songs'
+            id: '9bZkp7q19f0',
+            title: 'PSY - GANGNAM STYLE(강남스타일) M/V',
+            channel: 'officialpsy',
+            views: '4.5B views',
+            likes: '32M likes',
+            date: 'Jul 15, 2012',
+            duration: '4:12',
+            description: 'PSY - "GANGNAM STYLE(강남스타일)" M/V. The most viewed K-pop video on YouTube.',
+            thumbnail: 'https://i.ytimg.com/vi/9bZkp7q19f0/maxresdefault.jpg'
         },
         {
-            id: '6T7h9ovWQHY',
-            title: 'Bheemla Nayak Trailer | Pawan Kalyan | Rana | Trivikram | Thaman S',
-            channel: 'Sithara Entertainments',
-            views: '52M views',
-            date: 'Jan 21, 2022',
-            duration: '2:31',
-            category: 'trailers'
+            id: 'kJQP7kiw5Fk',
+            title: 'Luis Fonsi - Despacito ft. Daddy Yankee',
+            channel: 'Luis Fonsi',
+            views: '7.9B views',
+            likes: '50M likes',
+            date: 'Jan 12, 2017',
+            duration: '4:41',
+            description: 'Official video of "Despacito" by Luis Fonsi ft. Daddy Yankee. The most viewed video on YouTube.',
+            thumbnail: 'https://i.ytimg.com/vi/kJQP7kiw5Fk/maxresdefault.jpg'
         },
         {
-            id: 'mY7M0Q9Qk2k',
-            title: 'Jai Balayya - Full Comedy Show | Balakrishna | Sunil | Anil Ravipudi',
-            channel: 'HAHA TV',
-            views: '18M views',
-            date: 'Jun 15, 2022',
-            duration: '25:42',
-            category: 'comedy'
+            id: 'JGwWNGJdvx8',
+            title: 'Ed Sheeran - Shape of You [Official Video]',
+            channel: 'Ed Sheeran',
+            views: '5.9B views',
+            likes: '35M likes',
+            date: 'Jan 30, 2017',
+            duration: '4:23',
+            description: 'The official music video for Ed Sheeran - Shape of You. The remix EP is out now: https://atlanti.cr/yt-shapeofyou',
+            thumbnail: 'https://i.ytimg.com/vi/JGwWNGJdvx8/maxresdefault.jpg'
         },
         {
-            id: 'sCbbMZ-q4-I',
-            title: 'Srivalli - Pushpa: The Rise | Allu Arjun | DSP | Sid Sriram',
-            channel: 'T-Series',
-            views: '420M views',
-            date: 'Dec 17, 2021',
-            duration: '4:05',
-            category: 'songs'
+            id: 'RgKAFK5djSk',
+            title: 'Wiz Khalifa - See You Again ft. Charlie Puth [Official Video]',
+            channel: 'Wiz Khalifa',
+            views: '5.8B views',
+            likes: '40M likes',
+            date: 'Apr 6, 2015',
+            duration: '3:49',
+            description: 'Official video for "See You Again" by Wiz Khalifa ft. Charlie Puth. Furious 7: Original Motion Picture Soundtrack.',
+            thumbnail: 'https://i.ytimg.com/vi/RgKAFK5djSk/maxresdefault.jpg'
         },
         {
-            id: '5hG4QZfQ7tI',
-            title: 'KGF Chapter 2 Trailer | Yash | Sanjay Dutt | Raveena Tandon',
-            channel: 'Mythri Movie Makers',
-            views: '68M views',
-            date: 'Mar 14, 2022',
-            duration: '2:55',
-            category: 'trailers'
+            id: 'OPf0YbXqDm0',
+            title: 'Mark Ronson - Uptown Funk ft. Bruno Mars',
+            channel: 'Mark Ronson',
+            views: '4.8B views',
+            likes: '30M likes',
+            date: 'Nov 19, 2014',
+            duration: '4:29',
+            description: 'Official video for "Uptown Funk" by Mark Ronson ft. Bruno Mars.',
+            thumbnail: 'https://i.ytimg.com/vi/OPf0YbXqDm0/maxresdefault.jpg'
         },
         {
-            id: 'JfVOs4VSpmA',
-            title: 'Ramulo Ramula | Sri Rama Janmabhoomi | Hanuman Chalisa | Shankar Mahadevan',
-            channel: 'Aditya Music',
-            views: '120M views',
-            date: 'Jan 15, 2024',
-            duration: '5:42',
-            category: 'devotional'
+            id: 'kJQP7kiw5Fk',
+            title: 'Luis Fonsi - Despacito ft. Daddy Yankee',
+            channel: 'Luis Fonsi',
+            views: '7.9B views',
+            likes: '50M likes',
+            date: 'Jan 12, 2017',
+            duration: '4:41',
+            description: 'Official video of "Despacito" by Luis Fonsi ft. Daddy Yankee. The most viewed video on YouTube.',
+            thumbnail: 'https://i.ytimg.com/vi/kJQP7kiw5Fk/maxresdefault.jpg'
         },
         {
-            id: '7B7RcQx9kGA',
-            title: 'Uyyala | Sai Narayan Reddy | Shreya Ghoshal | SP Balasubrahmanyam',
-            channel: 'Zee Music',
-            views: '85M views',
-            date: 'Feb 28, 2023',
-            duration: '4:18',
-            category: 'songs'
-        },
-        {
-            id: '3V1a6hWz1kE',
-            title: 'Salaar Teaser | Prabhas | Prashanth Neel | Hombale Films',
-            channel: 'Hombale Films',
-            views: '93M views',
-            date: 'Jul 6, 2023',
-            duration: '2:12',
-            category: 'trailers'
-        },
-        {
-            id: 'kXYiU_JCYtU',
-            title: 'Nannu Kurravadini Chesina Neelambari | Nityananda | Nityashanti | Srimanth Entertainment',
-            channel: 'Srimanth Entertainment',
-            views: '32M views',
-            date: 'May 15, 2023',
-            duration: '3:56',
-            category: 'devotional'
-        },
-        {
-            id: 'LkOa3KFFt2E',
-            title: 'Jagadala Kutala | Dasara | Nani | Keerthy Suresh | S. Thaman',
-            channel: 'VYRS Films',
-            views: '71M views',
-            date: 'Sep 28, 2022',
-            duration: '3:34',
-            category: 'songs'
-        },
-        {
-            id: '9hVU9sYcAGM',
-            title: 'Alavanti Pranam | Adipurush | Pooja Hegde | Jeevit Ramakrishna',
-            channel: 'Lyca Productions',
-            views: '59M views',
-            date: 'Nov 12, 2022',
-            duration: '4:22',
-            category: 'songs'
+            id: 'JGwWNGJdvx8',
+            title: 'Ed Sheeran - Shape of You [Official Video]',
+            channel: 'Ed Sheeran',
+            views: '5.9B views',
+            likes: '35M likes',
+            date: 'Jan 30, 2017',
+            duration: '4:23',
+            description: 'The official music video for Ed Sheeran - Shape of You. The remix EP is out now: https://atlanti.cr/yt-shapeofyou',
+            thumbnail: 'https://i.ytimg.com/vi/JGwWNGJdvx8/maxresdefault.jpg'
         }
     ];
 
-    // Initialize the gallery
-    function initGallery() {
-        displayedVideos = videosPerLoad;
-        renderVideos();
-        setupEventListeners();
-    }
-
-    // Render videos based on current filters
+    // Render videos
     function renderVideos() {
-        loadingSpinner.style.display = 'block';
-        videoGrid.innerHTML = '';
-        loadMoreBtn.style.display = 'none';
-        noResults.classList.add('d-none');
+        videosGrid.innerHTML = '';
         
-        setTimeout(() => {
-            const filteredVideos = filterVideos();
+        videos.forEach(video => {
+            const videoCard = document.createElement('div');
+            videoCard.className = 'video-card';
+            videoCard.innerHTML = `
+                <div class="thumbnail">
+                    <img src="${video.thumbnail}" alt="${video.title}">
+                    <span class="video-duration">${video.duration}</span>
+                </div>
+                <div class="video-info">
+                    <img src="https://randomuser.me/api/portraits/men/${Math.floor(Math.random() * 100)}.jpg" class="channel-icon-small">
+                    <div class="video-details">
+                        <h3>${video.title}</h3>
+                        <p>${video.channel}</p>
+                        <p class="video-stats">${video.views} • ${video.date}</p>
+                    </div>
+                </div>
+            `;
             
-            if (filteredVideos.length === 0) {
-                noResults.classList.remove('d-none');
-                loadingSpinner.style.display = 'none';
-                return;
-            }
-            
-            const videosToShow = filteredVideos.slice(0, displayedVideos);
-            
-            videosToShow.forEach(video => {
-                const videoCard = createVideoCard(video);
-                videoGrid.appendChild(videoCard);
-            });
-            
-            // Show/hide load more button
-            if (displayedVideos < filteredVideos.length) {
-                loadMoreBtn.style.display = 'block';
-            }
-            
-            loadingSpinner.style.display = 'none';
-        }, 500);
-    }
-
-    // Filter videos based on category and search
-    function filterVideos() {
-        return videos.filter(video => {
-            const matchesCategory = currentCategory === 'all' || video.category === currentCategory;
-            const matchesSearch = video.title.toLowerCase().includes(currentSearch.toLowerCase()) || 
-                                 video.channel.toLowerCase().includes(currentSearch.toLowerCase());
-            return matchesCategory && matchesSearch;
+            videoCard.addEventListener('click', () => openVideoModal(video));
+            videosGrid.appendChild(videoCard);
         });
-    }
-
-    // Create video card element
-    function createVideoCard(video) {
-        const col = document.createElement('div');
-        col.className = 'col-md-6 col-lg-4 col-xl-3';
-        
-        const card = document.createElement('div');
-        card.className = 'video-card card h-100';
-        card.setAttribute('role', 'button');
-        card.setAttribute('tabindex', '0');
-        
-        // Thumbnail with duration
-        const thumbnail = document.createElement('div');
-        thumbnail.className = 'video-thumbnail';
-        thumbnail.innerHTML = `
-            <img src="https://img.youtube.com/vi/${video.id}/maxresdefault.jpg" 
-                 alt="${video.title}"
-                 onerror="this.src='https://img.youtube.com/vi/${video.id}/hqdefault.jpg'">
-            <span class="video-duration">${video.duration}</span>
-        `;
-        
-        // Video info
-        const info = document.createElement('div');
-        info.className = 'video-info';
-        info.innerHTML = `
-            <h5 class="video-title">${video.title}</h5>
-            <div class="video-channel">${video.channel}</div>
-            <div class="video-meta">
-                <span>${video.views}</span>
-                <span>•</span>
-                <span>${video.date}</span>
-            </div>
-        `;
-        
-        // Add click and keyboard events
-        card.addEventListener('click', () => openVideoModal(video));
-        card.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                openVideoModal(video);
-            }
-        });
-        
-        card.appendChild(thumbnail);
-        card.appendChild(info);
-        col.appendChild(card);
-        
-        return col;
     }
 
     // Open video modal
     function openVideoModal(video) {
-        youtubePlayer.src = `https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0&modestbranding=1`;
-        videoTitle.textContent = video.title;
+        youtubePlayer.src = `https://www.youtube.com/embed/${video.id}?autoplay=1`;
+        videoModalTitle.textContent = video.title;
         videoViews.textContent = video.views;
-        videoDate.textContent = video.date;
-        videoModal.show();
+        videoLikes.textContent = video.likes;
+        videoDescription.textContent = video.description;
+        videoModal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
     }
 
-    // Setup event listeners
-    function setupEventListeners() {
-        // Category filter chips
-        categoryChips.forEach(chip => {
-            chip.addEventListener('click', () => {
-                categoryChips.forEach(c => c.classList.remove('active'));
-                chip.classList.add('active');
-                currentCategory = chip.dataset.category;
-                displayedVideos = videosPerLoad;
-                renderVideos();
-            });
-        });
-
-        // Search functionality
-        searchButton.addEventListener('click', performSearch);
-        searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') performSearch();
-        });
-
-        // Load more videos
-        loadMoreBtn.addEventListener('click', () => {
-            displayedVideos += videosPerLoad;
-            renderVideos();
-            // Smooth scroll to show new videos
-            setTimeout(() => {
-                loadMoreBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }, 100);
-        });
-
-        // Clean up when modal closes
-        document.getElementById('videoModal').addEventListener('hidden.bs.modal', () => {
-            youtubePlayer.src = '';
-        });
+    // Close video modal
+    function closeVideoModal() {
+        videoModal.style.display = 'none';
+        youtubePlayer.src = '';
+        document.body.style.overflow = 'auto';
     }
 
-    // Perform search
-    function performSearch() {
-        currentSearch = searchInput.value.trim();
-        displayedVideos = videosPerLoad;
-        renderVideos();
-    }
+    // Event listeners
+    closeModal.addEventListener('click', closeVideoModal);
+    window.addEventListener('click', (e) => {
+        if (e.target === videoModal) {
+            closeVideoModal();
+        }
+    });
 
-    // Initialize the gallery
-    initGallery();
+    // Initialize
+    renderVideos();
 });

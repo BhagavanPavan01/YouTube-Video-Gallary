@@ -81,6 +81,43 @@ document.addEventListener('DOMContentLoaded', function () {
             duration: '3:22',
             description: 'Chitti Nadumune Full Video Song Hd | Pawan Kalyan, Meera Jasmine | Telugu Videos',
             thumbnail: 'https://diey8xpfs90ha.cloudfront.net/wp-content/uploads/2023/03/Pawan-Kalyan-Gudumba-Shankar-To-Get-Re-Release-1024x576.jpg'
+        },
+
+        
+        {
+            url: 'https://youtu.be/QQwDeJFSVvc?si=k0VyPnhgIbYA5-67',
+            title: 'Full Video: Daavudi - దావూదీ | Devara | NTR | Janhvi Kapoor | Koratala Siva | Anirudh Ravichander',
+            channel: 'Aditya Music',
+            views: '800M views',
+            likes: '5.3M likes',
+            date: 'Feb 2020',
+            duration: '3:22',
+            description: 'Full Video: Daavudi - దావూదీ | Devara | NTR | Janhvi Kapoor | Koratala Siva | Anirudh Ravichander',
+            thumbnail: 'https://i2.wp.com/socialnews.xyz/wp-content/uploads/2024/09/04/maxresdefault-45.jpg'
+        },
+
+        {
+            url: 'https://youtu.be/i_YVeV1_HGk?si=cZIm6Fa1sf53q_tV',
+            title: 'Manasara Telugu Movie HD Video Song Paravaledu Song Sri Divya Ravi Babu YouTube 720p',
+            channel: 'Aditya Music',
+            views: '800M views',
+            likes: '5.3M likes',
+            date: 'Feb 2020',
+            duration: '3:22',
+            description: 'Manasara Telugu Movie HD Video Song Paravaledu Song Sri Divya Ravi Babu YouTube 720p',
+            thumbnail: 'https://i.ytimg.com/vi/e_mlC0X4qR8/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLDXguR7rx_tl8h7I-iWSAYayyZcoA'
+        },
+
+        {
+            url: 'https://youtu.be/zK1BQk0L-5U?si=hEvxlQOQ5tkMA8f4',
+            title: 'Chitti Nadumune Full Video Song Hd | Pawan Kalyan, Meera Jasmine | Telugu Videos',
+            channel: 'Aditya Music',
+            views: '800M views',
+            likes: '5.3M likes',
+            date: 'Feb 2020',
+            duration: '3:22',
+            description: 'Chitti Nadumune Full Video Song Hd | Pawan Kalyan, Meera Jasmine | Telugu Videos',
+            thumbnail: 'https://diey8xpfs90ha.cloudfront.net/wp-content/uploads/2023/03/Pawan-Kalyan-Gudumba-Shankar-To-Get-Re-Release-1024x576.jpg'
         }
     ];
 
